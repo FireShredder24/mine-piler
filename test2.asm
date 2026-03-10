@@ -1,0 +1,8 @@
+LDI r1 7
+LDI r2 255
+LDI r5 128
+LOAD r3 r2
+OR r4 r2 r5
+STOR r2 r4
+SUB r2 r2 r1
+BIZ r0 3
