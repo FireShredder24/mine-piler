@@ -34,7 +34,7 @@ def schematic(pathi, patho = ""):
 					exit()
 				coords = (x, y, z)
 				schem.setBlock(coords, block) # setting the data block
-				y = y-2
+				y = y+2
 	if patho == "":
 		patho = pathi[:-3]
 	schem.save("schematics",patho,mcschematic.Version.JE_1_20_1)

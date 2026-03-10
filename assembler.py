@@ -135,14 +135,12 @@ def assemble(line):
 			return assembly
 	elif count == 2:
 		if "dddddddd" in assembly:
-			dddddddd = format(values[1],'08b')[::-1]
-			assembly = assembly.replace("dddddddd",dddddddd)
 			if not "!" in words[1]:		
 				dddddddd = format(values[1],'08b')[::-1]
 				assembly = assembly.replace("dddddddd",dddddddd)	
 				return assembly
 			else:
-				return assembly+words[1].strip("!")
+				return assembly+words[1].strip("!\n")
 		else:
 			wwww = format(values[1],'04b')[::-1]
 			assembly = assembly.replace("wwww",wwww)
@@ -156,18 +154,26 @@ def file_assemble(path_in, path_out = ""):
 	out = []
 	inspointer = 0
 	subroutines = {}
+	out.append("0000000000000000") # mandatory no-op on instruction zero
+  # first pass finds subroutine keys
+	for n, line in enumerate(f):
+		while "#" in line:
+			line = line[:-1]
+		if len(line)>0 and line[0]==".":
+			subroutines[line[1:].strip("\n")] = inspointer + 1
+		elif len(line)>0:
+			inspointer = inspointer + 1
+	print(subroutines)
+	f.close()
+	f = open(path_in,"rt")
+	# second pass parses the actual instructions
 	for n, line in enumerate(f):
 		# Strip comments from the end of the line
 		while "#" in line:
 			line = line[:-1]
-		# If there's anything left it's either...
+		# If there's anything left it's an actual instruction
 		if len(line) != 0:
-			# A subroutine key
-			if line[0] == ".":
-				subroutines[line[1:].strip("\n")] = inspointer + 1 
-			# Or an actual instruction
-			else: 
-				inspointer = inspointer + 1
+			if not line[0]==".":
 				assembly = assemble(line)
 				# if it's less than 16 characters it's an error code
 				if type(assembly) == int:
@@ -183,6 +189,7 @@ def file_assemble(path_in, path_out = ""):
 						print(f'Key {key} not found in subroutines {subroutines}')
 						exit()
 					pointerstr = format(int(pointer),'08b')[::-1]
+					print(f"asm line {n}: {key}:{pointer} -> {pointerstr}")
 					final = final.replace("dddddddd",pointerstr)
 				else:
 					final = assembly
