@@ -11,6 +11,12 @@ import string
 # Machine code is output with least significant bit on the LEFT.
 # All comments must be prefixed a #
 # No blank lines!
+# subroutine keys are defined in their own line with a .
+# keys are recalled by passing them in prefixed with a !
+# e.g.
+# .loop
+# yada yadda
+# BIZ r2 !loop
 
 # First 4 bits are the opcode
 # wwww is the first 4-bit argument (usually a register writeback address)
